@@ -141,6 +141,9 @@ function getPoint() {
 	}else if($("#inputname").html() == '作品链接：'||$("#inputname").html() == '视频链接：'||$("#inputname").html() == '分享链接：'||inputnametype=='shareurl'){
 		$('#inputvalue').attr("placeholder", "在此输入复制后的链接 可自动转换");
 		$('#inputname').attr("gettype", "shareurl");
+	}else if(inputnametype=='pinduoduo'){
+		$('#inputvalue').attr("placeholder", "在此粘贴你的拼多多助力口令");
+		$('#inputname').attr("gettype", "pinduoduo");
 	}else{
 		$('#inputvalue').removeAttr("placeholder");
 		$('#inputvalue2').removeAttr("placeholder");
@@ -301,6 +304,78 @@ function getshareid2(id, songurl){
 	if(songurl.indexOf('http')<0){return false;}
 	getshareid();
 }
+function getpddinput() {
+    var result = "";
+    var pddinput = $("#inputvalue").val();
+    if (pddinput == '') {
+        return false;
+    }
+    if (pddinput.indexOf("PinDuoDuo") != -1 && pddinput.indexOf("http") === -1) {
+        pddinput = pddinput.replace("PinDuoDuo", "");
+    }
+    var pattresult = (/[a-zA-Z0-9=_\&\?\-\/]?[a-zA-Z0-9]{16}[a-zA-Z0-9=_\&\?\-\/]?/).exec(pddinput);
+    var patt_str = (/τ[a-zA-Z0-9]{13}τ/).exec(pddinput);
+    var pattresult1 = (/(^[a-zA-Z0-9][a-zA-Z0-9]+)点+/).exec(pddinput);
+    var pattresult2 = (/(^[0-9]{15})/).exec(pddinput);
+    var pattresult3 = (/([0-9]{15}$)/).exec(pddinput);
+    var pattresult4 = (/[0-9]{6,20}/).exec(pddinput);
+    var pattresult5 = (/(http|https):\/\/[\w\.\=\_\/\-\$\&\!\?\(\)#%+:;]+/).exec(pddinput);
+    var pattresult6 = (/([0-9]{8})/).exec(pddinput);
+    var pattresult7 = (/[a-zA-Z0-9=_\&\?\-\/]?[a-zA-Z0-9]{15}[a-zA-Z0-9=_\&\?\-\/]?/).exec(pddinput);
+    var pattresult12 = (/^[a-zA-Z0-9]{16}/).exec(pddinput);
+    
+    var pattresult10 = (/[\ud83a-\ud83f][\u0000-\uFFFF]/).exec(pddinput);
+    var no_emoji_input = pddinput.replace(/[\ud83a-\ud83f][\u0000-\uFFFF]/g, "");
+    no_emoji_input = no_emoji_input.replace(/[\ufe00-\ufe0f]/g, "");
+    no_emoji_input = no_emoji_input.replace(/[\u0000-\uffff][\u20aa-\u20ff]/g, "");
+    
+    var pattresult13 = (/[a-zA-Z0-9]{13}/).exec(no_emoji_input);
+    var pattresult14 = (/[a-zA-Z0-9]{14}/).exec(no_emoji_input);
+    var status = false;
+    if (exec_succ(patt_str)) {
+        result = patt_str[0];
+    } else if (exec_succ(pattresult1) && pattresult1.length > 1) {
+        result = pattresult1[1];
+    } else if (exec_succ(pattresult2) && pattresult2.length > 1) {
+        result = pattresult2[1];
+    } else if (exec_succ(pattresult3) && pattresult3.length > 1) {
+        result = pattresult3[1];
+    } else if (exec_succ(pattresult) && pattresult[0].length == 16) {
+        var a = pattresult[0].length;
+        result = pattresult[0];
+    } else if (exec_succ(pattresult5) && pattresult5.length > 1) {
+        var a = pattresult5[0].length;
+        result = pattresult5[0];
+    } else if (pddinput.indexOf("⇥") != -1 && pddinput.indexOf("⇤") != -1) {
+        result = pddinput.substring(pddinput.indexOf("⇥"), pddinput.indexOf("⇤") + 1);
+        layer.msg('ID获取成功！提交下单即可');
+    } else if (exec_succ(pattresult4) && (pattresult4[0].length == 9 || pattresult4[0].length == 13 || pattresult4[0].length == 15)) {
+        result = pattresult4[0];
+        status = true;
+    } else if (pddinput.indexOf("口令") != -1 && exec_succ(pattresult6) && pattresult6.length > 1) {
+        result = pattresult6[1];
+    } else if (!exec_succ(pattresult10) && exec_succ(pattresult7) && pattresult7[0].length == 15) {
+        var a = pattresult7[0].length;
+        result = pattresult7[0];
+    } else if (exec_succ(pattresult12)) {
+        result = pattresult12[0];
+    } else if (exec_succ(pattresult13) && !exec_succ(pattresult14)) {
+        var password = "\ud83d\ude42" + pattresult13[0].slice(0, 6) + "\ud83d\ude42" + pattresult13[0].slice(6) + "\ud83d\ude42";
+        result = password;
+        $('#inputvalue').prop('readonly', true);
+    } else {
+        result = pddinput;
+    }
+    $('#inputvalue').val(result);
+    return status;
+}
+function exec_succ(pattresult) {
+    if (typeof(pattresult) == 'object' && pattresult != null && pattresult.length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 var handlerEmbed = function (captchaObj) {
 	captchaObj.appendTo('#captcha');
 	captchaObj.onReady(function () {
@@ -314,7 +389,7 @@ var handlerEmbed = function (captchaObj) {
 		$.ajax({
 			type : "POST",
 			url : "ajax.php?act=pay",
-			data : {tid:$("#tid").val(),inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),inputvalue6:$("#inputvalue6").val(),num:$("#num").val(),hashsalt:hashsalt,geetest_challenge:result.geetest_challenge,geetest_validate:result.geetest_validate,geetest_seccode:result.geetest_seccode},
+			data : {tid:$("#tid").val(),inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),num:$("#num").val(),hashsalt:hashsalt,geetest_challenge:result.geetest_challenge,geetest_validate:result.geetest_validate,geetest_seccode:result.geetest_seccode},
 			dataType : 'json',
 			success : function(data) {
 				layer.close(ii);
@@ -338,7 +413,7 @@ var handlerEmbed2 = function (token) {
 	$.ajax({
 		type : "POST",
 		url : "ajax.php?act=pay",
-		data : {tid:$("#tid").val(),inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),inputvalue6:$("#inputvalue6").val(),num:$("#num").val(),hashsalt:hashsalt,token:token},
+		data : {tid:$("#tid").val(),inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),num:$("#num").val(),hashsalt:hashsalt,token:token},
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
@@ -364,7 +439,7 @@ var handlerEmbed3 = function (vaptchaObj) {
 		$.ajax({
 			type : "POST",
 			url : "ajax.php?act=pay",
-			data : {tid:$("#tid").val(),inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),inputvalue6:$("#inputvalue6").val(),num:$("#num").val(),hashsalt:hashsalt,token:token},
+			data : {tid:$("#tid").val(),inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),num:$("#num").val(),hashsalt:hashsalt,token:token},
 			dataType : 'json',
 			success : function(data) {
 				layer.close(ii);
@@ -454,6 +529,11 @@ function checkInput() {
 			getsharelink();
 		}
 	}
+	else if($('#inputname').attr("gettype")=='pinduoduo'){
+		if($("#inputvalue").val()!=''){
+			getpddinput();
+		}
+	}
 }
 function getCity(inputid,fid,i){
 	i = i || 0;
@@ -515,7 +595,7 @@ $(document).ready(function(){
 		if(tid==0){layer.alert('请选择商品！');return false;}
 		var inputvalue=$("#inputvalue").val();
 		if(inputvalue=='' || tid==''){layer.alert('请确保每项不能为空！');return false;}
-		if($("#inputvalue2").val()=='' || $("#inputvalue3").val()=='' || $("#inputvalue4").val()=='' || $("#inputvalue5").val()=='' || $("#inputvalue6").val()==''){layer.alert('请确保每项不能为空！');return false;}
+		if($("#inputvalue2").val()=='' || $("#inputvalue3").val()=='' || $("#inputvalue4").val()=='' || $("#inputvalue5").val()==''){layer.alert('请确保每项不能为空！');return false;}
 		if(($('#inputname').html()=='下单ＱＱ：' || $('#inputname').html()=='ＱＱ账号：' || $("#inputname").html() == 'QQ账号：') && (inputvalue.length<5 || inputvalue.length>11 || isNaN(inputvalue))){layer.alert('请输入正确的QQ号！');return false;}
 		var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
 		if($('#inputname').html()=='你的邮箱：' && !reg.test(inputvalue)){layer.alert('邮箱格式不正确！');return false;}
@@ -531,11 +611,16 @@ $(document).ready(function(){
 		if($("#inputname2").html() == '抖音评论ID：'){
 			if($("#inputvalue2").val().length != 19){layer.alert('您输入的评论ID有误！请点击自动获取手动选择评论！');return false;}
 		}
+		if($('#inputname').attr("gettype")=='shareurl'){
+			if($("#inputvalue").val().indexOf('http://')==-1 && $("#inputvalue").val().indexOf('https://')==-1){
+				layer.alert('您输入的链接有误！请重新输入！');return false;
+			}
+		}
 		var ii = layer.load(2, {shade:[0.1,'#fff']});
 		$.ajax({
 			type : "POST",
 			url : "ajax.php?act=pay",
-			data : {tid:tid,inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),inputvalue6:$("#inputvalue6").val(),num:$("#num").val(),hashsalt:hashsalt},
+			data : {tid:tid,inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),num:$("#num").val(),hashsalt:hashsalt},
 			dataType : 'json',
 			success : function(data) {
 				layer.close(ii);
@@ -637,9 +722,11 @@ $(document).ready(function(){
 					});
 				}else if(data.code == 4){
 					var confirmobj = layer.confirm('请登录后再购买，是否现在登录？', {
-					  btn: ['前往登录','取消']
+					  btn: ['登录','注册','取消']
 					}, function(){
 						window.location.href='./user/login.php';
+					}, function(){
+						window.location.href='./user/reg.php';
 					}, function(){
 						layer.close(confirmobj);
 					});
@@ -654,7 +741,7 @@ $(document).ready(function(){
 		if(tid==0){layer.alert('请选择商品！');return false;}
 		var inputvalue=$("#inputvalue").val();
 		if(inputvalue=='' || tid==''){layer.alert('请确保每项不能为空！');return false;}
-		if($("#inputvalue2").val()=='' || $("#inputvalue3").val()=='' || $("#inputvalue4").val()=='' || $("#inputvalue5").val()=='' || $("#inputvalue6").val()==''){layer.alert('请确保每项不能为空！');return false;}
+		if($("#inputvalue2").val()=='' || $("#inputvalue3").val()=='' || $("#inputvalue4").val()=='' || $("#inputvalue5").val()==''){layer.alert('请确保每项不能为空！');return false;}
 		if(($('#inputname').html()=='下单ＱＱ' || $('#inputname').html()=='ＱＱ账号' || $("#inputname").html() == 'QQ账号') && (inputvalue.length<5 || inputvalue.length>11 || isNaN(inputvalue))){layer.alert('请输入正确的QQ号！');return false;}
 		var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
 		if($('#inputname').html()=='你的邮箱' && !reg.test(inputvalue)){layer.alert('邮箱格式不正确！');return false;}
@@ -670,11 +757,16 @@ $(document).ready(function(){
 		if($("#inputname2").html() == '抖音评论ID'){
 			if($("#inputvalue2").val().length != 19){layer.alert('您输入的评论ID有误！请点击自动获取手动选择评论！');return false;}
 		}
+		if($('#inputname').attr("gettype")=='shareurl'){
+			if($("#inputvalue").val().indexOf('http://')==-1 && $("#inputvalue").val().indexOf('https://')==-1){
+				layer.alert('您输入的链接有误！请重新输入！');return false;
+			}
+		}
 		var ii = layer.load(2, {shade:[0.1,'#fff']});
 		$.ajax({
 			type : "POST",
 			url : "ajax.php?act=pay&method=cart_add",
-			data : {tid:tid,inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),inputvalue6:$("#inputvalue6").val(),num:$("#num").val(),hashsalt:hashsalt},
+			data : {tid:tid,inputvalue:$("#inputvalue").val(),inputvalue2:$("#inputvalue2").val(),inputvalue3:$("#inputvalue3").val(),inputvalue4:$("#inputvalue4").val(),inputvalue5:$("#inputvalue5").val(),num:$("#num").val(),hashsalt:hashsalt},
 			dataType : 'json',
 			success : function(data) {
 				layer.close(ii);
@@ -695,9 +787,11 @@ $(document).ready(function(){
 					});
 				}else if(data.code == 4){
 					var confirmobj = layer.confirm('请登录后再购买，是否现在登录？', {
-					  btn: ['前往登录','取消']
+					  btn: ['登录','注册','取消']
 					}, function(){
 						window.location.href='./user/login.php';
+					}, function(){
+						window.location.href='./user/reg.php';
 					}, function(){
 						layer.close(confirmobj);
 					});
