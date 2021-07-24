@@ -13,33 +13,17 @@ var $_GET = (function(){
         return {};
     }
 })();
-function share_shop(){
-	var ii = layer.msg('正在生成分享链接...', {icon: 16, time: 9999999});
+function gethb(){
+	var ii = layer.msg('正在生成海报...', {icon: 16, time: 9999999});
 	$.ajax({
 		type : "GET",
-		url : "ajax.php?act=share_link&tid="+$_GET['tid'],
+		url : "./code/index.php?tid="+$_GET['tid'],
 		dataType : 'json',
 		success : function(data) {
 			layer.close(ii);
-			if(data.code == 0){
-				var clipboard;
-				var confirmobj = layer.confirm(data.content, {
-				  title:'生成分享链接成功',shadeClose:true,btn: ['复制','关闭'], success: function(){
-					clipboard = new Clipboard('.layui-layer-btn0',{text: function() {return data.content;}});
-					clipboard.on('success', function (e) {
-						alert('复制成功！');
-					});
-					clipboard.on('error', function (e) {
-						alert('复制失败，请长按链接后手动复制');
-					});
-				  }
-				  ,end: function(){
-					clipboard.destroy();
-				  }
-				}, function(){
-				}, function(){
-					layer.close(confirmobj);
-				});
+			if(data.code == 1){
+				$('#file').attr('src','./code/file/cg_'+$_GET['tid']+'_'+data.price+'.jpg');
+				$('.hb_info').show();
 			}else{
 				layer.alert(data.msg);
 			}
