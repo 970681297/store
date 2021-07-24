@@ -595,7 +595,7 @@ $(document).ready(function(){
 		}
 		if($('#inputname').attr("gettype")=='shareurl'){
 			if($("#inputvalue").val().indexOf('http://')==-1 && $("#inputvalue").val().indexOf('https://')==-1){
-				layer.alert('您输入的链接有误！请重新输入！<br>由于某官方更新原复制按钮，复制出来的是口令，请注意查看，链接是包含http开头的才是！');return false;
+				layer.alert('您输入的链接有误！请重新输入！由于某官方更新原复制按钮，复制出来的是口令！注意查看复制出来的内容包含http开头的才是！');return false;
 			}
 		}
 		var ii = layer.load(2, {shade:[0.1,'#fff']});
@@ -739,7 +739,7 @@ $(document).ready(function(){
 		}
 		if($('#inputname').attr("gettype")=='shareurl'){
 			if($("#inputvalue").val().indexOf('http://')==-1 && $("#inputvalue").val().indexOf('https://')==-1){
-				layer.alert('您输入的链接有误！请重新输入！');return false;
+				layer.alert('您输入的链接有误！请重新输入！由于某官方更新原复制按钮，复制出来的是口令！注意查看复制出来的内容包含http开头的才是！');return false;
 			}
 		}
 		var ii = layer.load(2, {shade:[0.1,'#fff']});
