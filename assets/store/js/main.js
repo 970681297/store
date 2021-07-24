@@ -465,11 +465,9 @@ function dopay(type,orderid){
 					});
 				}else if(data.code == -4){
 					var confirmobj = layer.confirm('你还未登录，是否现在登录？', {
-					  btn: ['登录','注册','取消']
+					  btn: ['登录','取消']
 					}, function(){
 						window.location.href='./user/login.php';
-					}, function(){
-						window.location.href='./user/reg.php';
 					}, function(){
 						layer.close(confirmobj);
 					});
@@ -589,15 +587,15 @@ $(document).ready(function(){
 			if($("#inputvalue2").val().length != 24){layer.alert('说说必须是原创说说！');return false;}
 		}
 		checkInput();
-		if($("#inputname").html() == '抖音作品ID：'||$("#inputname").html() == '火山作品ID：'||$("#inputname").html() == '火山直播ID：'){
+		if($("#inputname").html() == '视频作品ID：'||$("#inputname").html() == '火山作品ID：'||$("#inputname").html() == '火山直播ID：'){
 			if($("#inputvalue").val().length != 19){layer.alert('您输入的作品ID有误！');return false;}
 		}
-		if($("#inputname2").html() == '抖音评论ID：'){
+		if($("#inputname2").html() == '视频评论ID：'){
 			if($("#inputvalue2").val().length != 19){layer.alert('您输入的评论ID有误！请点击自动获取手动选择评论！');return false;}
 		}
 		if($('#inputname').attr("gettype")=='shareurl'){
 			if($("#inputvalue").val().indexOf('http://')==-1 && $("#inputvalue").val().indexOf('https://')==-1){
-				layer.alert('您输入的链接有误！请重新输入！');return false;
+				layer.alert('您输入的链接有误！请重新输入！<br>由于某官方更新原复制按钮，复制出来的是口令，请注意查看，链接是包含http开头的才是！');return false;
 			}
 		}
 		var ii = layer.load(2, {shade:[0.1,'#fff']});
@@ -706,11 +704,9 @@ $(document).ready(function(){
 					});
 				}else if(data.code == 4){
 					var confirmobj = layer.confirm('请登录后再购买，是否现在登录？', {
-					  btn: ['登录','注册','取消']
+					  btn: ['登录','取消']
 					}, function(){
 						window.location.href='./user/login.php';
-					}, function(){
-						window.location.href='./user/reg.php';
 					}, function(){
 						layer.close(confirmobj);
 					});
@@ -735,10 +731,10 @@ $(document).ready(function(){
 			if($("#inputvalue2").val().length != 24){layer.alert('说说必须是原创说说！');return false;}
 		}
 		checkInput();
-		if($("#inputname").html() == '抖音作品ID'||$("#inputname").html() == '火山作品ID'||$("#inputname").html() == '火山直播ID'){
+		if($("#inputname").html() == '视频作品ID'||$("#inputname").html() == '火山作品ID'||$("#inputname").html() == '火山直播ID'){
 			if($("#inputvalue").val().length != 19){layer.alert('您输入的作品ID有误！');return false;}
 		}
-		if($("#inputname2").html() == '抖音评论ID'){
+		if($("#inputname2").html() == '视频评论ID'){
 			if($("#inputvalue2").val().length != 19){layer.alert('您输入的评论ID有误！请点击自动获取手动选择评论！');return false;}
 		}
 		if($('#inputname').attr("gettype")=='shareurl'){
@@ -771,11 +767,9 @@ $(document).ready(function(){
 					});
 				}else if(data.code == 4){
 					var confirmobj = layer.confirm('请登录后再购买，是否现在登录？', {
-					  btn: ['登录','注册','取消']
+					  btn: ['登录','取消']
 					}, function(){
 						window.location.href='./user/login.php';
-					}, function(){
-						window.location.href='./user/reg.php';
 					}, function(){
 						layer.close(confirmobj);
 					});
