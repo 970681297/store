@@ -13,23 +13,6 @@ var $_GET = (function(){
         return {};
     }
 })();
-function gethb(){
-	var ii = layer.msg('正在生成海报...', {icon: 16, time: 9999999});
-	$.ajax({
-		type : "GET",
-		url : "./code/index.php?tid="+$_GET['tid'],
-		dataType : 'json',
-		success : function(data) {
-			layer.close(ii);
-			if(data.code == 1){
-				$('#file').attr('src','./code/file/cg_'+$_GET['tid']+'_'+data.price+'.jpg');
-				$('.hb_info').show();
-			}else{
-				layer.alert(data.msg);
-			}
-		} 
-	});
-}
 function getPoint() {
 	var multi = $('#tid').attr('multi');
 	var count = $('#tid').attr('count');
